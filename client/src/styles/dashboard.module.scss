@@ -1,0 +1,35 @@
+.container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+
+    &__header {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        padding: 2rem 4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--white);
+        gap: 1rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .container {
+    
+        &__header {
+            flex-direction: row;
+            justify-content: space-between;
+            text-align: left;
+        }
+    }
+}

@@ -1,0 +1,32 @@
+.nav {
+    background-color: var(--main_light);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 2rem 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+
+    &__list {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .nav {
+        background-color: transparent;
+    }
+
+    .nav__list {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0;
+    }
+}

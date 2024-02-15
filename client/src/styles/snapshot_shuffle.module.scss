@@ -1,0 +1,19 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--green);
+    border-radius: 20px;
+    padding: 1rem;
+
+    &__button {
+        border: none;
+        background-color: transparent;
+        color: var(--white);
+    }
+
+    &__date {
+        color: var(--white);
+    }
+}

@@ -1,0 +1,103 @@
+.container {
+    width: 100%;
+    height: 100%;
+    padding: 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+
+    &__left {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+
+        &__heading {
+            text-align: center;
+            color: var(--white);
+            font-size: 2em;
+        }
+    }
+
+    &__right {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &__image__ipad {
+            display: block;
+        }
+        &__image__desktop {
+            display: none;
+        }
+
+        &__blur_circle {
+            position: absolute;
+            width: 30vw;
+            height: 30vw;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.5;
+            z-index: -1;
+        }
+        
+        &__blur_circle--top {
+            background-color: var(--orange);
+            top: -20%;
+            left: -20%;
+        }
+        
+        &__blur_circle--bottom {
+            background-color: var(--green);
+            bottom: -20%;
+            right: -20%;
+        }
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .container {
+        flex-direction: row;
+        justify-content: space-between;
+
+        &__left, &__right {
+            flex: 1;
+        }
+
+        &__left {
+            flex-grow: 1;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            &__heading {
+                text-align: left;
+            }
+        }
+
+        &__right {            
+            &__blur_circle--top {
+                background-color: var(--orange);
+                top: -20%;
+                left: -20%;
+            }
+            
+            &__blur_circle--bottom {
+                background-color: var(--green);
+                bottom: -20%;
+                right: -20%;
+            }
+
+            &__image__ipad {
+                display: none;
+            }
+            &__image__desktop {
+                display: block;
+            }
+        }
+    }
+}

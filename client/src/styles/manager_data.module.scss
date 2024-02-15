@@ -1,0 +1,30 @@
+.container {
+    margin-top: 25vh;
+    height: 100%;
+    width: 100%;
+    padding: 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+
+    &__error {
+        color: var(--red);
+        margin: 2rem 0;
+    }
+
+    &__success {
+        color: var(--green);
+        margin: 2rem 0;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .container {
+        margin-top: 10vh;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        align-items: flex-end;
+    }
+}

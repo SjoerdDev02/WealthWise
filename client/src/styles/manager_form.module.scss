@@ -1,0 +1,22 @@
+.container {
+    height: 100%;
+    padding: 1rem;
+    border-radius: 10px;
+    background-color: var(--main_light);
+
+    & h3 {
+        color: var(--white);
+    }
+
+    &__item_container {
+        padding: 0.5rem 1rem;
+        margin: 0.5rem 0;
+        border-radius: 20px;
+        background-color: var(--main_dark);
+        color: var(--white);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+}

@@ -1,0 +1,39 @@
+.light_mode {
+    --main_light: #FFFFFF;
+    --main_dark: #F1F4F8;
+    --white: #000000;
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+
+    & > section {
+        margin-top: 27vh;
+        border-radius: 10px;
+        background-color: var(--main_dark);
+        min-height: 70vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .main {
+        flex-direction: row;
+
+        & > section {
+            margin-top: 0;
+            height: calc(100vh - 4vw);
+            width: 81vw;
+        }
+    }
+}

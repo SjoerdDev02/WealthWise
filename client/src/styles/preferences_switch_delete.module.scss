@@ -1,0 +1,31 @@
+.switch_delete_container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+
+    &__error {
+        color: var(--red);
+    }
+
+    &__success {
+        color: var(--green);
+    }
+    
+    &__delete_btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        color: var(--white);
+        background: linear-gradient(var(--orange), #FF9433);
+        box-shadow: inset 0 0 0 0 var(--orange);
+        transition: ease-out 0.8s;
+    
+        &:hover {
+            box-shadow: inset 600px 0 0 0 #FF9433;
+        }
+    }
+}

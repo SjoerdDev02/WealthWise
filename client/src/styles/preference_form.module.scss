@@ -1,0 +1,25 @@
+.preference_form_container {
+    width: 100%;
+    background-color: var(--main_light);
+    padding: 1rem;
+    border-radius: 10px;
+
+    &__header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+
+        &__heading {
+            color: var(--white);
+        }
+
+        &__button {
+            background-color: transparent;
+            border: none;
+            color: var(--white);
+        }
+    }
+}

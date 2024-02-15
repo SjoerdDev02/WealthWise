@@ -1,0 +1,9 @@
+.main {
+    margin-top: 20vh;
+}
+
+@media screen and (min-width: 768px) {
+    .main {
+        margin-top: 0;
+    }
+}
