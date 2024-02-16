@@ -2,10 +2,15 @@
 
 import styles from '@/styles/entry_form.module.scss';
 import preferenceStyles from '@/styles/preference_form.module.scss';
-import { useState } from 'react';
-import { FieldValues, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import updateUserInfo from '@/app/api/updateUserInfo';
+import { updateUserInfo } from '@/app/actions/userActions';
+import { useFormState, useFormStatus } from 'react-dom';
+
+const initialState = {
+	isSuccess: false,
+	isError: false,
+}
 
 export default function PreferencePersonalForm({
 	name,
@@ -14,45 +19,18 @@ export default function PreferencePersonalForm({
 	name: string;
 	email: string;
 }) {
+	const [state, formAction] = useFormState(updateUserInfo, initialState);
+	const { pending } = useFormStatus();
+
 	const [isCollapsed, setIsCollapsed] = useState(true);
-	const [isSucces, setIsSucces] = useState(false);
-	const [isError, setIsError] = useState(false);
 
-	const {
-		register,
-		formState: { errors, isSubmitting },
-		handleSubmit,
-		reset,
-	} = useForm({
-		defaultValues: {
-			name: name,
-			email: email,
-		},
-	});
-
-	async function onSubmit(data: FieldValues) {
-		const response = await updateUserInfo(
-			data.name,
-			data.email,
-		);
-
-		if (response.status !== 200) {
-			setIsError(true);
-			return;
-		}
-
-		reset();
-
-		setIsSucces(true);
+	useEffect(() => {
 		setTimeout(() => {
 			setIsCollapsed(true);
 		}, 2000);
-	}
+	}, [state.isSuccess])
 
 	const collapseForm = () => {
-		if (isCollapsed) {
-			setIsSucces(false);
-		}
 		setIsCollapsed((previousValue) => !previousValue);
 	};
 
@@ -66,8 +44,8 @@ export default function PreferencePersonalForm({
 					<i>&#9662;</i>
 				</button>
 			</header>
-			{isSucces && <p className={styles.container__success}>Changes in email and name are saved successful!</p>}
-			{isError && (
+			{state.isSuccess && !isCollapsed && <p className={styles.container__success}>Changes in email and name are saved successful!</p>}
+			{state.isError && (
 				<p className={styles['container__error']}>
 					Something went wrong saving the changes
 				</p>
@@ -85,15 +63,10 @@ export default function PreferencePersonalForm({
 					transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
 					className={styles.container}
 					role='form'
-					onSubmit={handleSubmit(onSubmit)}
+					action={formAction}
 				>
 					<div className={styles['container__form_bundle']}>
 						<div className={styles['container__form_group']}>
-							{errors.name && (
-								<p className={styles['container__error']}>
-									{String(errors.name.message)}
-								</p>
-							)}
 							<label
 								className={
 									styles['container__form_group__label']
@@ -108,18 +81,13 @@ export default function PreferencePersonalForm({
 								}
 								type='text'
 								id='name'
-								placeholder='********'
-								{...register('name', {
-									required: 'Name is required',
-								})}
+								name='name'
+								title='Name is required'
+								required
+								defaultValue={name}
 							/>
 						</div>
 						<div className={styles['container__form_group']}>
-							{errors.email && (
-								<p className={styles['container__error']}>
-									{String(errors.email.message)}
-								</p>
-							)}
 							<label
 								className={
 									styles['container__form_group__label']
@@ -134,17 +102,17 @@ export default function PreferencePersonalForm({
 								}
 								type='email'
 								id='emailLogin'
-								placeholder='name@email.com'
-								{...register('email', {
-									required: 'Email is required',
-								})}
+								name='email'
+								title='Email is required'
+								required
+								defaultValue={email}
 							/>
 						</div>
 					</div>
 					<button
 						type='submit'
 						className='btn'
-						disabled={isSubmitting}
+						disabled={pending}
 					>
 						Save Changes
 					</button>

@@ -1,5 +1,5 @@
 import ManagerData from '@/components/manager/ManagerData';
-import getUser from '../../api/getUser';
+import { getUser } from '@/app/actions/userActions';
 import Snapshotshuffle from '@/components/manager/SnapshotShuffle';
 import styles from '@/styles/manager.module.scss';
 import { Metadata } from 'next';

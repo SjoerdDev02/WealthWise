@@ -30,17 +30,15 @@ export default function Home() {
 					className={styles['container__right__image__ipad']}
 					src={ipad_preview}
 					alt='Preview of WealthWise'
-					width={2400}
-					height={3201}
-					layout='responsive'
+					width={150}
+					height={200}
 				/>
 				<Image
 					className={styles['container__right__image__desktop']}
 					src={desktop_preview}
 					alt='Preview of WealthWise'
-					width={1440}
-					height={940}
-					layout='responsive'
+					width={720}
+					height={400}
 				/>
 				<div
 					className={`${styles['container__right__blur_circle']} ${styles['container__right__blur_circle--top']}`}

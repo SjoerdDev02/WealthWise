@@ -12,6 +12,7 @@ use App\Models\Preference;
 use App\Models\Snapshot;
 use App\Models\User;
 use App\Traits\HttpResponses;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -40,42 +41,46 @@ class AuthController extends Controller
     {
         $request->validated($request->only(['name', 'email', 'password']));
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        Preference::create([
-            'user_id' => $user->id,
-        ]);
-
-        $snapshot = Snapshot::create([
-            'user_id' => $user->id,
-            'year' => date("Y"),
-            'month' => date("n"),
-            'income' => 5000,
-            'expenses' => 3500,
-            'total_investments' => 12000,
-            'total_liabilities' => 7000,
-        ]);
-
-        Investment::create([
-            'snapshot_id' => $snapshot->id,
-            'source' => 'stocks',
-            'amount' => 2000,
-        ]);
-
-        Liability::create([
-            'snapshot_id' => $snapshot->id,
-            'source' => 'mortgage',
-            'amount' => 2000,
-        ]);
-
-        return $this->success([
-            'user' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
-        ]);
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+    
+            Preference::create([
+                'user_id' => $user->id,
+            ]);
+    
+            $snapshot = Snapshot::create([
+                'user_id' => $user->id,
+                'year' => date("Y"),
+                'month' => date("n"),
+                'income' => 5000,
+                'expenses' => 3500,
+                'total_investments' => 12000,
+                'total_liabilities' => 7000,
+            ]);
+    
+            Investment::create([
+                'snapshot_id' => $snapshot->id,
+                'source' => 'stocks',
+                'amount' => 2000,
+            ]);
+    
+            Liability::create([
+                'snapshot_id' => $snapshot->id,
+                'source' => 'mortgage',
+                'amount' => 2000,
+            ]);
+    
+            return $this->success([
+                'user' => $user,
+                'token' => $user->createToken('API Token')->plainTextToken,
+            ], null, 201);
+        } catch (Exception $e) {
+            return $this->error('', 'Form input is not valid', 422);
+        }
     }
 
     public function getUser()
@@ -100,9 +105,9 @@ class AuthController extends Controller
         ]);
     }
 
-    public function delete(Request $request)
+    public function delete()
     {
-        $user = $request->user();
+        $user = User::find(Auth::id());
 
         $user->tokens()->delete();
 

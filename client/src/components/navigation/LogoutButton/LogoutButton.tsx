@@ -1,6 +1,6 @@
 'use client';
 
-import logoutUser from '../../../app/api/logoutUser';
+import { logoutUser } from '@/app/actions/userActions';
 import Image from 'next/image';
 import logout_icon from '../../../../public/icons/logout.svg';
 import styles from '@/styles/nav_item.module.scss';
@@ -10,13 +10,9 @@ export default function LogoutButton() {
     const router = useRouter();
 
     async function handleLogout() {
-        const response = await logoutUser();
-
-        console.log(response);
-
+        await logoutUser();
         router.push('/');
     }
-
 
     return (
         <button className={styles.nav__item} style={{ border: 'none' }} onClick={handleLogout}>

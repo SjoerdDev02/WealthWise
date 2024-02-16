@@ -1,5 +1,5 @@
 import PreferencePersonalForm from '@/components/preferences/PreferencePersonalForm';
-import getUser from '../../api/getUser';
+import { getUser } from '@/app/actions/userActions';
 import PreferencePasswordForm from '@/components/preferences/PreferencePasswordForm';
 import styles from '@/styles/preferences.module.scss';
 import PreferencesSwitchDelete from '@/components/preferences/PreferencesSwitchDelete';

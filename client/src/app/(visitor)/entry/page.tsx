@@ -1,7 +1,7 @@
 'use client';
 
-import LoginForm from '@/components/forms/LoginForm';
-import RegisterForm from '@/components/forms/RegisterForm';
+import LoginForm from '@/components/entry/LoginForm';
+import RegisterForm from '@/components/entry/RegisterForm';
 import styles from '@/styles/entry.module.scss';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';

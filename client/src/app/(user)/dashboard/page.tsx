@@ -1,4 +1,4 @@
-import getUser from '@/app/api/getUser';
+import { getUser } from '@/app/actions/userActions';
 import ChartContainer from '@/components/dashboard/ChartContainer';
 import Snapshotshuffle from '@/components/manager/SnapshotShuffle';
 import styles from '@/styles/dashboard.module.scss';

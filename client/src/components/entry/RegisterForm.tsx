@@ -1,93 +1,79 @@
+import React, { useState, useEffect } from 'react';
 import styles from '@/styles/entry_form.module.scss';
-import { useForm, type FieldValues } from 'react-hook-form';
 import { useAnimate, stagger } from 'framer-motion';
-import { useEffect, useState } from 'react';
-import createUser from '../../app/api/createUser';
-import { useRouter } from 'next/navigation';
+import { createUser } from '../../app/actions/userActions';
+import { useFormState, useFormStatus } from 'react-dom';
+
+const initialState = {
+	isError: false,
+	message: '',
+};
 
 export default function RegisterForm({
 	handleSwitch,
 }: {
 	handleSwitch: () => void;
 }) {
-	const [error, setError] = useState<string | null>(null);
+	const [state, formAction] = useFormState(createUser, initialState);
+	const { pending } = useFormStatus();
 	const [scope, animate] = useAnimate();
-	const router = useRouter();
 
-	const {
-		register,
-		formState: { errors, isSubmitting },
-		handleSubmit,
-		watch,
-		reset,
-	} = useForm();
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
+	const [passwordMatch, setPasswordMatch] = useState(true);
 
 	useEffect(() => {
-		if (errors) {
+		if (state.isError) {
 			animate(
 				'input',
 				{ x: [-10, 0, 10, 0] },
 				{ type: 'spring', duration: 0.2, delay: stagger(0.05) }
 			);
 		}
-	}, [errors, animate]);
+	}, [state.isError, animate]);
 
-	async function onSubmit(data: FieldValues) {
-		const response = await createUser(
-			data.name,
-			data.email,
-			data.password,
-			data.passwordConfirm
-		);
-		console.log(response);
+	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setPassword(e.target.value);
+		setPasswordMatch(e.target.value === confirmPassword);
+	};
 
-		if (response.status !== 200) {
-			setError(response.data.message);
-			return;
-		}
-
-		reset();
-		router.push('/dashboard');
-	}
+	const handleConfirmPasswordChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setConfirmPassword(e.target.value);
+		setPasswordMatch(e.target.value === password);
+	};
 
 	return (
 		<form
 			className={styles.container}
 			role='form'
-			onSubmit={handleSubmit(onSubmit)}
+			action={formAction}
 			ref={scope}
 		>
 			<h2 className={styles['container__heading']}>Signup</h2>
-			{error && <p className={styles['container__error']}>{error}</p>}
+			{state.isError && (
+				<p className={styles['container__error']}>{state.message}</p>
+			)}
 			<div className={styles['container__form_bundle']}>
 				<div className={styles['container__form_group']}>
-					{errors.email && (
-						<p className={styles['container__error']}>
-							{String(errors.email.message)}
-						</p>
-					)}
 					<label
 						className={styles['container__form_group__label']}
 						htmlFor='emailRegister'
 					>
-						Email adress
+						Email address
 					</label>
 					<input
 						className={styles['container__form_group__input']}
 						type='email'
 						id='emailRegister'
+						name='email'
 						placeholder='name@email.com'
-						{...register('email', {
-							required: 'Email is required',
-						})}
+						title='Email is required'
+						required
 					/>
 				</div>
 				<div className={styles['container__form_group']}>
-					{errors.name && (
-						<p className={styles['container__error']}>
-							{String(errors.name.message)}
-						</p>
-					)}
 					<label
 						className={styles['container__form_group__label']}
 						htmlFor='nameRegister'
@@ -98,20 +84,20 @@ export default function RegisterForm({
 						className={styles['container__form_group__input']}
 						type='text'
 						id='nameRegister'
+						name='name'
 						placeholder='John'
-						{...register('name', {
-							required: 'Name is required',
-						})}
+						title='Name is required'
+						required
 					/>
 				</div>
 			</div>
+			{!passwordMatch && (
+				<p className={styles['container__error']}>
+					Passwords do not match
+				</p>
+			)}
 			<div className={styles['container__form_bundle']}>
 				<div className={styles['container__form_group']}>
-					{errors.password && (
-						<p className={styles['container__error']}>
-							{String(errors.password.message)}
-						</p>
-					)}
 					<label
 						className={styles['container__form_group__label']}
 						htmlFor='passwordRegister'
@@ -122,28 +108,17 @@ export default function RegisterForm({
 						className={styles['container__form_group__input']}
 						type='password'
 						id='passwordRegister'
+						name='password'
 						placeholder='********'
-						{...register('password', {
-							required: 'Password is required',
-							minLength: {
-								value: 6,
-								message:
-									'Password must have at least 6 characters',
-							},
-							pattern: {
-								value: /^(?=.*[A-Z]).{6,}$/,
-								message:
-									'Password must contain at least one uppercase letter',
-							},
-						})}
+						min={6}
+						pattern='.*[A-Z].*'
+						title='Password must contain at least six characters and one uppercase letter'
+						required
+						value={password}
+						onChange={handlePasswordChange}
 					/>
 				</div>
 				<div className={styles['container__form_group']}>
-					{errors.passwordConfirm && (
-						<p className={styles['container__error']}>
-							{String(errors.passwordConfirm.message)}
-						</p>
-					)}
 					<label
 						className={styles['container__form_group__label']}
 						htmlFor='passwordConfirmRegister'
@@ -154,17 +129,25 @@ export default function RegisterForm({
 						className={styles['container__form_group__input']}
 						type='password'
 						id='passwordConfirmRegister'
+						name='passwordConfirm'
 						placeholder='********'
-						{...register('passwordConfirm', {
-							required: 'Confirmation is required',
-							validate: (value) =>
-								value === watch('password') ||
-								'Passwords do not match',
-						})}
+						min={6}
+						required
+						value={confirmPassword}
+						onChange={handleConfirmPasswordChange}
+						title={
+							passwordMatch
+								? 'Passwords match'
+								: 'Passwords do not match'
+						}
 					/>
 				</div>
 			</div>
-			<button type='submit' className='btn' disabled={isSubmitting}>
+			<button
+				type='submit'
+				className='btn'
+				disabled={pending || !passwordMatch}
+			>
 				Create Account
 			</button>
 			<p className={styles['container__switch']}>

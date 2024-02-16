@@ -2,48 +2,45 @@
 
 import styles from '@/styles/entry_form.module.scss';
 import preferenceStyles from '@/styles/preference_form.module.scss';
-import { useState } from 'react';
-import { FieldValues, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import updateUserPassword from '../../app/api/updateUserPassword';
+import { updateUserPassword } from '@/app/actions/userActions';
+import { useFormState, useFormStatus } from 'react-dom';
+
+const initialState = {
+	isSuccess: false,
+	isError: false,
+}
 
 export default function PreferencePasswordForm() {
+	const [state, formAction] = useFormState(updateUserPassword, initialState);
+	const { pending } = useFormStatus();
+
 	const [isCollapsed, setIsCollapsed] = useState(true);
-	const [isSucces, setIsSucces] = useState(false);
-	const [isError, setIsError] = useState(false);
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
+	const [passwordMatch, setPasswordMatch] = useState(true);
 
-	const {
-		register,
-		formState: { errors, isSubmitting },
-		handleSubmit,
-		reset,
-		watch,
-	} = useForm();
-
-	async function onSubmit(data: FieldValues) {
-		const response = await updateUserPassword(
-			data.newPassword,
-			data.confirmPassword,
-		);
-
-		if (response.status !== 200) {
-			setIsError(true);
-			return;
-		}
-
-		reset();
-
-		setIsSucces(true);
+	useEffect(() => {
 		setTimeout(() => {
 			setIsCollapsed(true);
 		}, 2000);
-	}
+	}, [state.isSuccess])
 
 	const collapseForm = () => {
-		if (isCollapsed) {
-			setIsSucces(false);
-		}
 		setIsCollapsed((previousValue) => !previousValue);
+	};
+
+	const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setPassword(e.target.value);
+		setPasswordMatch(e.target.value === confirmPassword);
+	};
+
+	const handleConfirmPasswordChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setConfirmPassword(e.target.value);
+		setPasswordMatch(e.target.value === password);
 	};
 
 	return (
@@ -73,8 +70,8 @@ export default function PreferencePasswordForm() {
 					<i>&#9662;</i>
 				</button>
 			</header>
-			{isSucces && <p className={styles.container__success}>Password changed successful!</p>}
-			{isError && (
+			{state.isSuccess && !isCollapsed && <p className={styles.container__success}>Password changed successful!</p>}
+			{state.isError && (
 				<p className={styles['container__error']}>
 					Something went wrong saving the changes
 				</p>
@@ -95,15 +92,10 @@ export default function PreferencePasswordForm() {
 						}}
 						className={styles.container}
 						role='form'
-						onSubmit={handleSubmit(onSubmit)}
+						action={formAction}
 					>
 						<div className={styles['container__form_bundle']}>
 							<div className={styles['container__form_group']}>
-								{errors.oldPassword && (
-									<p className={styles['container__error']}>
-										{String(errors.oldPassword.message)}
-									</p>
-								)}
 								<label
 									className={
 										styles['container__form_group__label']
@@ -118,28 +110,15 @@ export default function PreferencePasswordForm() {
 									}
 									type='password'
 									id='oldPassword'
+									name='oldPassword'
 									placeholder='********'
-									{...register('oldPassword', {
-										required: 'Old password is required',
-										minLength: {
-											value: 6,
-											message:
-												'Password must have at least 6 characters',
-										},
-										pattern: {
-											value: /^(?=.*[A-Z]).{6,}$/,
-											message:
-												'Password must contain at least one uppercase letter',
-										},
-									})}
+									min={6}
+									pattern='.*[A-Z].*'
+									title='Old password must contain at least six characters and one uppercase letter'
+									required
 								/>
 							</div>
 							<div className={styles['container__form_group']}>
-								{errors.newPassword && (
-									<p className={styles['container__error']}>
-										{String(errors.newPassword.message)}
-									</p>
-								)}
 								<label
 									className={
 										styles['container__form_group__label']
@@ -155,29 +134,23 @@ export default function PreferencePasswordForm() {
 									type='password'
 									id='newPassword'
 									placeholder='********'
-									{...register('newPassword', {
-										required: 'New password is required',
-										minLength: {
-											value: 6,
-											message:
-												'Password must have at least 6 characters',
-										},
-										pattern: {
-											value: /^(?=.*[A-Z]).{6,}$/,
-											message:
-												'Password must contain at least one uppercase letter',
-										},
-									})}
+									name='password'
+									min={6}
+									pattern='.*[A-Z].*'
+									title='New password must contain at least six characters and one uppercase letter'
+									required
+									value={password}
+									onChange={handlePasswordChange}
 								/>
 							</div>
 						</div>
+						{!passwordMatch && (
+							<p className={styles['container__error']}>
+								Passwords do not match
+							</p>
+						)}
 						<div className={styles['container__form_bundle']}>
 							<div className={styles['container__form_group']}>
-								{errors.confirmPassword && (
-									<p className={styles['container__error']}>
-										{String(errors.confirmPassword.message)}
-									</p>
-								)}
 								<label
 									className={
 										styles['container__form_group__label']
@@ -193,19 +166,20 @@ export default function PreferencePasswordForm() {
 									type='password'
 									id='confirmPassword'
 									placeholder='********'
-									{...register('confirmPassword', {
-										required: 'Confirmation is required',
-										validate: (value) =>
-											value === watch('newPassword') ||
-											'Passwords do not match',
-									})}
+									name='passwordConfirm'
+									min={6}
+									pattern='.*[A-Z].*'
+									title='Password confirmation must contain at least six characters and one uppercase letter'
+									required
+									value={confirmPassword}
+									onChange={handleConfirmPasswordChange}
 								/>
 							</div>
 							<div className={styles['container__form_group']}>
 							<button
 								type='submit'
 								className='btn'
-								disabled={isSubmitting}
+								disabled={pending}
 							>
 								Save Password
 							</button>

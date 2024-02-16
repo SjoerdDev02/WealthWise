@@ -5,18 +5,15 @@ import euro_icon from '../../../public/icons/euro.svg';
 import dollar_icon from '../../../public/icons/dollar.svg';
 import dark_icon from '../../../public/icons/dark.svg';
 import light_icon from '../../../public/icons/light.svg';
-import { FieldValues, UseFormRegister } from 'react-hook-form';
 
 export default function PreferenceSwitch({
 	values,
 	name,
 	activeValue,
-    register,
 }: {
 	values: string[];
 	name: string;
 	activeValue: string;
-    register: UseFormRegister<FieldValues>
 }) {
 	const [value, setValue] = useState(activeValue);
 
@@ -47,7 +44,7 @@ export default function PreferenceSwitch({
 			<input
 				type='hidden'
 				value={value}
-				{...register(name)}
+				name={name}
 			/>
 		</article>
 	);

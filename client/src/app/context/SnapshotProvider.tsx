@@ -2,8 +2,7 @@
 
 import { SnapshotContext } from './SnapshotContext';
 import { useState, useEffect } from 'react';
-import getSnapshot from '../api/getSnapshot';
-import createSnapshot from '../api/createSnapshot';
+import { createSnapshot, getSnapshot } from '../actions/snapshotActions';
 import { SnapshotType } from '../types/SnapshotType';
 
 export const SnapshotProvider = ({

@@ -1,7 +1,7 @@
 export type SnapshotItemType = {
     id: number,
     source: string,
-    amount: string,
+    amount: string | number,
 }
 
 export type SnapshotType = {
